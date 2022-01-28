@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>{$sitetitle}</title>
+
+<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/messages_ja.js"></script>
+
+<script type="text/javascript">
+<!--
+{literal}
+
+	var callet_active = 0;
+
+	function setFormInput(val){
+		if(callet_active){
+			var  formElement = document.parForm.filename_format;
+			var  temp = formElement.value;
+			try{
+				formElement.setRangeText( val, formElement.selectionStart, formElement.selectionEnd, 'end' );
+			}catch(e){}
+			//HTML5非対応対策
+			if( temp === formElement.value )
+				formElement.value += val;
+			formElement.focus();
+		}
+	}
+
+	var PRG = {
+		force_cont:function() {
+			if( $('#id_force_cont_rec' ).val() == 0 ) {
+				$('#id_rec_switch_time').attr('disabled','disabled');
+			}
+			else {
+				$('#id_rec_switch_time').attr('disabled',false);
+			}
+		}
+	}
+	$(document).ready(function(){
+		$("#env_setting").validate();
+		PRG.force_cont();
+	});
+
+{/literal}
+
+-->
+</script>
+
+
+<style type="text/css">
+<!--
+{literal}
+
+body {padding:4px;margin:0;font-size:10pt; width: 85%;}
+a {text-decoration:none;}
+
+.bold {font-weight:bold;}
+.small {font-size:75%;}
+
+div.setting { padding: 0px; margin-left: 20px; margin-bottom: 20px;}
+
+table#extra_strings th {
+	text-align: center;
+	white-space:pre;
+	background: #BBB;
+}
+table#extra_strings td {white-space:pre;}
+table#extra_strings td.subcmd {background: #DDD;}
+{/literal}
+-->
+</style>
+</head>
+<body>
+
+
+
+<form id="env_setting" name="parForm" method="post" action="{$post_to}">
+
+<div>{$message}</div>
+
+<h2>デジタルチューナー設定</h2>
+
+
+<h3>地デジチューナーの台数</h3>
+<div class="setting">
+<div class="caption">サーバーに接続されている地デジチューナーの台数を設定してください。地デジチューナーを持っていない場合、0にします。</div>
+<input type="text" name="gr_tuners" value="{$settings->gr_tuners}" size="3" class="required digits" />
+</div>
+
+<h3>BSチューナーの台数</h3>
+<div class="setting">
+<div class="caption">サーバーに接続されているBSチューナーの台数を設定してください。BSチューナーを持っていない場合、0にします。</div>
+<input type="text" name="bs_tuners" value="{$settings->bs_tuners}" size="3" class="required digits" />
+</div>
+
+<h3>CS録画の有無</h3>
+<div class="setting">
+<div class="caption">この設定を「行う」にするとCS放送を加味した動作となります。CS放送を使用しない方は「使わない」に設定してください。</div>
+<select name="cs_rec_flg" id="id_cs_rec_flg" >
+  <option value="0" {if $settings->cs_rec_flg == 0} selected {/if}>行わない</option>
+  <option value="1" {if $settings->cs_rec_flg == 1} selected {/if}>行う</option>
+</select>
+</div>
+<br>
+<h2>録画関連設定</h2>
+時間に係わる設定は、チャンネルやチューナーの個体差をカバーする為に適切な値を設定することを推奨します。
+
+<h3>録画開始の余裕時間</h3>
+<div class="setting">
+<div class="caption">どのくらい録画開始を早めるかを設定してください。早める時間を短くしすぎると、番組冒頭がとぎれる恐れがあります。設定できる時間は0秒以上59秒未満です。</div>
+<input type="text" name="former_time" value="{$settings->former_time}" size="4" class="required digits" min="0" max="59" />秒
+</div>
+
+<h3>録画時間を長めにする</h3>
+<div class="setting">
+<div class="caption">どのくらい録画終了を遅らせるかを設定してください。遅らせる時間を短くしすぎると、番組末尾がとぎれる恐れがあります。なお「連続した番組の予約」設定で録画時間短縮をされた番組にはこの設定は適用されません。</div>
+<input type="text" name="extra_time" value="{$settings->extra_time}" size="4" class="required digits" />秒
+</div>
+
+<h3>録画コマンドの切り替え時間</h3>
+<div class="setting">
+<div class="caption">連続した番組を予約するとき、録画が終了して次の録画を開始するまでの余裕時間（秒）を設定します。1以上の秒数を設定してください。設定する秒数が短いほど録画時間を短縮する時間が短くなりますが、この時間を短くしすぎると連続した番組の予約に失敗する恐れがあります。失敗するかどうかは使用している録画コマンドやチューナーに依存します。</div>
+<input type="text" name="rec_switch_time" id="id_rec_switch_time" value="{$settings->rec_switch_time}" size="4" class="required digits" min="1" />秒
+</div>
+
+
+<h3>連続した番組の予約</h3>
+<div class="setting">
+<div class="caption">この設定を「行う」にするとepgrecが自動的に直前の時間に予約されている番組の録画時間を短縮して時間が連続している番組の予約を可能にします。録画時間を短縮する時間は「録画開始の余裕時間」＋「録画コマンドの切り替え時間」です。この機能を使って連続した番組を予約する場合、前の時間の番組の最後がとぎれる可能性がありますが、チューナーが1台しか無くても連続した番組の予約が可能になります。手動予約時や自動録画キーワードごとに個別の設定ができますので「行う」を推奨します。</div>
+<select name="force_cont_rec" id="id_force_cont_rec" onChange="javascript:PRG.force_cont()" >
+  <option value="0" {if $settings->force_cont_rec == 0} selected {/if}>行わない</option>
+  <option value="1" {if $settings->force_cont_rec == 1} selected {/if}>行う</option>
+</select>
+</div>
+
+
+<h3>優先する録画モード</h3>
+<div class="setting">
+<div class="caption">キーワード自動録画や手動録画を行う番組の録画モードを設定します。<br>
+ただしキーワード自動録画では録画モードでのトランスコードを行なわずモード1(HD TS)相当で動作します。<br>
+キーワード自動録画はキーワード登録時に録画モードを設定することもできます。デフォルトはモード1です。<br>
+《以降は非推奨事項です。》<br>
+do-record.shの登録・カスタマイズと config.phpの$RECORD_MODEに設定を追加すれば新規録画モードを登録することができます。
+</div>
+<select name="autorec_mode" id="id_autorec_mode" >
+{foreach from=$record_mode item=mode name=recmode}
+  <option value="{$smarty.foreach.recmode.index}" {if $settings->autorec_mode == $smarty.foreach.recmode.index} selected {/if}>{$mode.name}</option>
+{/foreach}
+</select>
+</div>
+
+
+
+<h3>mediatomb連係機能</h3>
+<div class="setting">
+<div class="caption">この設定を「使う」にすると録画した番組のタイトルと概要をmediatombに反映させます。mediatombを使用していない方は「使わない」に設定してください。なお、この設定を利用するにはmediatomb側の設定も必要になります。詳しくはドキュメントを参照してください。
+</div>
+<select name="mediatomb_update" id="id_mediatomb_update" >
+  <option value="0" {if $settings->mediatomb_update == 0} selected {/if}>使わない</option>
+  <option value="1" {if $settings->mediatomb_update == 1} selected {/if}>使う</option>
+</select>
+</div>
+
+<h3>録画ファイル名の形式</h3>
+<div class="setting">
+<div class="caption">自動キーワード登録時の初期値と簡易予約に利用されます。<br>
+特殊文字列を記述することで番組情報を反映できます。使用できる特殊文字列は以下の通りです。
+
+<table id="extra_strings" cellspacing="1" border="1">
+ <tr title="『特殊文字列』をクリックするとその『特殊文字列』が『録画ファイル名の形式』に入力されます。">
+  <th colspan="4">番組タイトル関連</th><th colspan="2">チャンネル関連</th><th colspan="4">日時関連</th></tr>
+ <tr title="『特殊文字列』をクリックするとその『特殊文字列』が『録画ファイル名の形式』に入力されます。">
+  <th>特殊文字列</th><th>置換後の内容</th><th>特殊文字列</th><th>置換後の内容</th><th>特殊文字列</th><th>置換後の内容</th><th>特殊文字列</th><th>置換後の内容</th><th>特殊文字列</th><th>置換後の内容</th></tr>
+<tr>
+ <td onClick="setFormInput('%TITLE%')">%TITLE%</td><td>番組タイトル</td>
+ <td onClick="setFormInput('%PROCESS()%')" title="%PROCESS(TARGET[,OPERATE1[,OPERATEn]])%	
+	TARGET				取得対象を選択	
+		TITLE			タイトル	
+		DESC			概要	
+	OPERATE				TARGETに各種加工を行なう。加工の順番・回数に制限無し	
+		$CUT$,A			文字列Aを削除 文字列Aは複数指定も可能	
+		$REPLACE$,A,B	文字列Aを文字列Bに置換	
+		$SPRIT$,A,n		文字列Aで分割した第n区画を取得する(n=0-nn)	
+		$LIMIT$,n		取得byte数を制限する。負数の場合は後方から数える。">%PROCESS(A,B1)%</td><td title="加工されたタイトルまたは概要を取得">対象の加工取得</td>
+ <td onClick="setFormInput('%TYPE%')">%TYPE%</td><td title="ex.GR BS CS EX">放送波識別</td>
+ <td onClick="setFormInput('%YEAR%')">%YEAR%</td><td>開始年</td>
+ <td onClick="setFormInput('%ST%')">%ST%</td><td title="ex.200907201830">開始日時</td>
+</tr>
+
+<tr>
+ <td onClick="setFormInput('%TITLE()%')" rowspan="2">%TITLE(n1,A,n2)%<br>(n1=n.A,n2=0-n)</td><td rowspan="2" title="一部省略する場合はカンマをつけない事(ex:%DESC(n1,A)%)	
+	n1	取得byte数 負数の場合は後方基準とする。
+		0の場合は指定領域の全体が対象となる。	
+	A	区切り文字列(省略可、その場合はn2も省略すること)	
+	n2	文字列Aで区切られた区画の対象位置(省略可 その場合は先頭区画を対象とする)
+		総数を超える場合は最後尾が対象となる。">番組タイトル部分取得</td>
+ <th colspan="2" title="">以下は%PROCESS()%用</td>
+ <td onClick="setFormInput('%CH%')">%CH%</td><td title="ex.18 BS15_0 CS14">物理チャンネル</td>
+ <td onClick="setFormInput('%MONTH%')">%MONTH%</td><td>開始月</td>
+ <td onClick="setFormInput('%ET%')">%ET%</td><td title="ex.200907201830">終了日時</td>
+</tr>
+
+<tr>
+
+ <td class="label subcmd" onClick="setFormInput('$TITLE$,')">$TITLE$</td><td class="desc subcmd" title="">番組タイトル</td>
+ <td onClick="setFormInput('%CH2%')">%CH2%</td><td title="地デジ:放送波識別+物理チャンネル+サービスID・BS/CS:放送波識別+サービスID 
+ex.GR18_3097 BS_101 CS_333">チャンネル番号2 </td>
+ <td onClick="setFormInput('%DAY%')">%DAY%</td><td>開始日</td>
+ <td onClick="setFormInput('%DATE()%')">%DATE(A)%</td><td title="文字列Aを書式としてPHP関数date()に渡す 
+%DATE(y-m-d H:i:s)%とすれば'15-10-31 19:00:00'に変換される">開始日時(任意指定)</td>
+</tr>
+
+<tr>
+ <td onClick="setFormInput('%DESC%')">%DESC%</td><td>番組概要</td>
+ <td class="label subcmd" onClick="setFormInput('$DESC$,')">$DESC$</td><td class="desc subcmd" title="">番組概要</td>
+ <td onClick="setFormInput('%CH3%')">%CH3%</td><td title="地デジ:物理チャンネル・BS/CS:サービスID 
+ex.18 101 333">チャンネル番号3</td>
+ <td onClick="setFormInput('%HOUR%')">%HOUR%</td><td>開始時</td>
+ <td onClick="setFormInput('%DURATION%')">%DURATION%</td><td>録画時間（秒）</td>
+</tr>
+
+<tr>
+ <td onClick="setFormInput('%DESC()%')" rowspan="2">%DESC(n1,A,n2)%<br>(n1=nn.A,n2=0-nn)</td><td rowspan="2" title="一部省略する場合はカンマをつけない事(ex:%DESC(n1,A)%)	
+	n1	取得byte数 負数の場合は後方基準とする。
+		0の場合は指定領域の全体が対象となる。 
+	A	区切り文字列(省略可、その場合はn2も省略すること) 
+	n2	文字列Aで区切られた区画の対象位置(省略可 その場合は先頭区画を対象とする)
+		総数を超える場合は最後尾が対象となる。">番組概要部分取得</td>
+ <td class="label subcmd" onClick="setFormInput('$CUT$,')">$CUT$,A</td><td class="desc subcmd" title="文字列Aを削除 文字列Aは複数指定も可能">文字列削除</td>
+ <td onClick="setFormInput('%CHNAME%')">%CHNAME%</td><td>チャンネル名</td>
+ <td onClick="setFormInput('%MIN%')">%MIN%</td><td>開始分</td>
+ <td onClick="setFormInput('%DURAHMS%')">%DURAHMS%</td><td>録画時間（時:分:秒）</td>
+</tr>
+
+<tr>
+
+ <td class="label subcmd" onClick="setFormInput('$REPLACE$,,')">$REPLACE$,A,B</td><td class="desc subcmd" title="文字列Aを文字列Bに置換">文字列置換</td>
+ <td onClick="setFormInput('%SID%')">%SID%</td><td>サービスID</td>
+ <td onClick="setFormInput('%SEC%')">%SEC%</td><td>開始秒</td>
+ <th colspan="2" title="文字列操作は、文字列操作以外の特殊文字列を置換した後に処理が行なわれます。">文字列操作</th>
+</tr>
+
+<tr>
+ <td colspan="2" rowspan="2"></td>
+ <td class="label subcmd" onClick="setFormInput('$SPRIT$,,')">$SPRIT$,A,n</td><td class="desc subcmd" title="文字列Aで分割した第n区画を取得する(n=0-nn)">文字列分割</td>
+ <td colspan="2" rowspan="2"></td>
+ <td onClick="setFormInput('%DOW%')">%DOW%</td><td>曜日（Sun-Mon）</td>
+ <td onClick="setFormInput('%REPLACE(,)%')">%REPLACE(A,B)%</td><td title="ファイル名全体から文字列Aを文字列Bに置換 
+文字列は、CSVフォーマットで記述">文字列置換</td>
+</tr>
+
+<tr>
+
+ <td class="label subcmd" onClick="setFormInput('$LIMIT$,')">$LIMIT$,n</td><td class="desc subcmd" title="取得byte数を制限する。負数の場合は後方から数える。">取得制限</td>
+ <td onClick="setFormInput('%DOWJ%')">%DOWJ%</td><td>曜日（日-土）</td>
+ <td onClick="setFormInput('%CUT()%')">%CUT(A)%</td><td title="ファイル名全体から文字列Aを削除 
+文字列Aは、CSVフォーマットで記述(複数指定も可能)">文字列削除</td>
+</tr>
+
+<!--
+ <td onClick="setFormInput('%TITLEn%')" rowspan="2">%TITLEn%<br>(n=1-9)</td><td rowspan="2" title="1枠の複数タイトルから選択変換 '/'でセパレートされているものとする 
+番組タイトルが『タイトル1/タイトル2』の場合、『%TITLE2%』を指定すると『タイトル2』が出力される">番組タイトル選択</td>
+ <td onClick="setFormInput('%TL_SBn%')" rowspan="2">%TL_SBn%<br>(n=1-nn)</td><td rowspan="2" title="1枠の複数サブタイトルから選別変換 
+番組タイトルが『タイトル #01「サブタイトル1」#02「サブタイトル2」』の場合、
+『%TL_SB1%』を指定すると『タイトル #01「サブタイトル1」』が出力される">番組タイトル+<br>話数サブタイトル選択</td>
+ <td onClick="setFormInput('%%[YmdHisD]*%%')" title="">%%[YmdHisD]*%%</td><td>開始日時('%%'に挟まれた部分をそのまま書式としてPHP関数date()に渡す 非変換部分に'%%'がある場合は誤変換に注意・対策はしない)</td>
+-->
+</table>
+<p style="margin-top: 20px; margin-bottom: 0px;">たとえば、</p>
+<pre style="padding: 3px; margin-top: 5px; margin-bottom: 5px; background-color:black; color:white;">
+%YEAR%年%MONTH%月%DAY%日%HOUR%時%MIN%分%SEC%秒_%TYPE%%CH%_%TITLE%
+               ↓↓
+2009年07月15日12時49分16秒_GR21_番組タイトル.ts
+</pre>
+というような形式の録画ファイルが生成されます。<br>
+ファイル名の重複は対策済みですが必要に応じて%TYPE%や%CH%などを混ぜると識別しやすくなるでしょう。
+<!--なお、ファイルシステムがUTF-8以外の文字コードで、ファイル名に日本語を交ぜる場合、config.php内の定数FILESYSTEM_ENCODINGに文字コードを設定することができます。
+ただし、UTF-8以外の文字コードはテストを行っていないため推奨しません。-->
+</div>
+<input type="text" name="filename_format" value="{$settings->filename_format}" size="80" class="required" onClick="callet_active=1;">
+</div>
+
+<h2>番組表表示設定</h2>
+
+以下の設定は実際に利用して様子を見ながら設定した方がいいでしょう。
+
+<h3>ページに表示する番組表の長さ</h3>
+<div class="setting">
+<div class="caption">1ページに表示する番組表の長さを時間で設定します。標準は8時間分です。</div>
+<input type="text" name="program_length" value="{$settings->program_length}" size="2" class="required digits" min="2" max="24" />時間
+</div>
+
+
+<h3>1局あたりの幅</h3>
+<div class="setting">
+<div class="caption">番組表の1局当たりの幅をピクセル数で設定します。標準は150ピクセルです。</div>
+<input type="text" id="ch_set_width" name="ch_set_width" value="{$settings->ch_set_width}" size="4" class="required digits" min="20" />ピクセル
+</div>
+
+
+<h3>1時間あたりの高さ</h3>
+<div class="setting">
+<div class="caption">番組表の1時間あたりの高さをピクセル数で設定します。標準は120ピクセルです。なお、60で割り切れないピクセル数を指定するとFirefoxを除くブラウザでは番組の高さが揃わなくなり見た目が悪くなるかもしれません。これはFirefox以外のブラウザでは実数のピクセルを正しくレンダリングしないためです。</div>
+<input type="text" id="height_per_hour" name="height_per_hour" value="{$settings->height_per_hour}" size="4" class="required digits" min="30" />ピクセル
+</div>
+
+
+<input type="submit" value="設定を保存する" id="env_setting-submit" />
+</form>
+</body>
+</html>

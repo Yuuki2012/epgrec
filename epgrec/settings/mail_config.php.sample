@@ -1,0 +1,22 @@
+<?php
+	define( 'SEND_TO', 'a@b.c' );		// メール宛て先
+	define( 'FROM_NAME', 'epgrecUNA' );		// ここは無意味 ネームはhttpdユーザー・アドレスはメールサーバーのログインアドレスに強制されるようだ
+
+	// メール件名
+	define( 'DISK_LIMIT_SUBJECT', 'Warning from epgrecUNA!!' );
+
+	// メール本文
+	// %DISKNAME%  ディスク名
+	// %DISKSIZE%  空き容量
+	// %DISKLIMIT% 警告開始残容量
+	// 改行は'\r\n'
+	define( 'DISK_LIMIT_MASSAGE', 'The free space of %DISKNAME% is less than %DISKLIMIT%.' );
+
+	// 警告開始残容量(Gbyte)
+	$DISK_LIMIT_SET = array(
+		'sda1'    => 10,
+		'sdb1'    => 10,
+		'sdc1'    => 10,
+		'default' => 10,	// 無該当
+	);
+?>

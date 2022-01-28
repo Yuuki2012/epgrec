@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<script type="text/javascript"><!--
+	function setFormInput(val){
+		if(!window.opener || window.opener.closed){
+			//親ウィンドウが存在しない
+			window.close();
+		} else{
+			//window.openerで親ウィンドウのオブジェクトを操作
+			var  parElement = window.opener.document.parForm.k_filename;
+			parElement.setRangeText( val, parElement.selectionStart, parElement.selectionEnd, 'end' );
+		}
+	}
+// --></script>
+
+<style type="text/css">
+<!--
+body {padding:4px;margin:0;font-size:10pt; width: 85%;}
+a {text-decoration:none;}
+
+.bold {font-weight:bold;}
+.small {font-size:75%;}
+
+div.setting { padding: 0px; margin-left: 20px; margin-bottom: 20px;}
+-->
+</style>
+</head>
+
+<body>
+<table cellspacing="1" border="1">
+<thead>
+<tr>
+  <th>特殊文字列</th><th>置換後の内容</th>
+</tr>
+</thead>
+<tbody>
+ <tr onClick="setFormInput('%TITLE%')"><td><span style="font-weight:bold;">%TITLE%</span></td><td>番組タイトル</td></tr>
+ <tr onClick="setFormInput('%TITLEn%')"><td><span style="font-weight:bold;">%TITLE</span>n<span style="font-weight:bold;">%</span></td><td>番組タイトル(n=1-9 1枠の複数タイトルから選別変換 '/'でセパレートされているものとする)<br>番組タイトルが<span style="font-weight:bold;">タイトル1/タイトル2</span>の場合、<span style="font-weight:bold;">%TITLE2%</span>を指定すると<span style="font-weight:bold;">タイトル2</span>が出力される</td></tr>
+ <tr onClick="setFormInput('%TL_SBn%')"><td><span style="font-weight:bold;">%TL_SB</span>n<span style="font-weight:bold;">%</span></td><td>番組タイトル+複数話分割(n=1-n 1枠の複数サブタイトルから選別変換)<br>番組タイトルが<span style="font-weight:bold;">タイトル #01「サブタイトル1」#02「サブタイトル2」</span>の場合、<span style="font-weight:bold;">%TL_SB1%</span>を指定すると<span style="font-weight:bold;">タイトル #01「サブタイトル1」</span>が出力される</td></tr>
+ <tr onClick="setFormInput('%ST%')"><td><span style="font-weight:bold;">%ST%</span></td><td>開始日時（ex.200907201830)</td></tr>
+ <tr onClick="setFormInput('%ET%')"><td><span style="font-weight:bold;">%ET%</span></td><td>終了日時（同上）</td></tr>
+ <tr onClick="setFormInput('%TYPE%')"><td><span style="font-weight:bold;">%TYPE%</span></td><td>放送波識別 (ex.GR BS CS EX)</td></tr>
+ <tr onClick="setFormInput('%CH%')"><td><span style="font-weight:bold;">%CH%</span></td><td>チャンネル番号 物理チャンネル(ex.18 BS15_0 CS14)</td></tr>
+ <tr onClick="setFormInput('%CH2%')"><td><span style="font-weight:bold;">%CH2%</span></td><td>チャンネル番号(その2) 地デジ:放送波識別+物理チャンネル+サービスID・BS/CS:放送波識別+サービスID(ex.GR18_3097 BS_101 CS_333)</td></tr>
+ <tr onClick="setFormInput('%CH3%')"><td><span style="font-weight:bold;">%CH3%</span></td><td>チャンネル番号(その3) 地デジ:物理チャンネル・BS/CS:サービスID(ex.18 101 333)</td></tr>
+ <tr onClick="setFormInput('%CHNAME%')"><td><span style="font-weight:bold;">%CHNAME%</span></td><td>チャンネル名</td></tr>
+ <tr onClick="setFormInput('%SID%')"><td><span style="font-weight:bold;">%SID%</span></td><td>サービスID</td></tr>
+ <tr onClick="setFormInput('%DOW%')"><td><span style="font-weight:bold;">%DOW%</span></td><td>曜日（Sun-Mon）</td></tr>
+ <tr onClick="setFormInput('%DOWJ%')"><td><span style="font-weight:bold;">%DOWJ%</span></td><td>曜日（日-土）</td></tr>
+ <tr onClick="setFormInput('%YEAR%')"><td><span style="font-weight:bold;">%YEAR%</span></td><td>開始年</td></tr>
+ <tr onClick="setFormInput('%MONTH%')"><td><span style="font-weight:bold;">%MONTH%</span></td><td>開始月</td></tr>
+ <tr onClick="setFormInput('%DAY%')"><td><span style="font-weight:bold;">%DAY%</span></td><td>開始日</td></tr>
+ <tr onClick="setFormInput('%HOUR%')"><td><span style="font-weight:bold;">%HOUR%</span></td><td>開始時</td></tr>
+ <tr onClick="setFormInput('%MIN%')"><td><span style="font-weight:bold;">%MIN%</span></td><td>開始分</td></tr>
+ <tr onClick="setFormInput('%SEC%')"><td><span style="font-weight:bold;">%SEC%</span></td><td>開始秒</td></tr>
+ <tr onClick="setFormInput('%DURATION%')"><td><span style="font-weight:bold;">%DURATION%</span></td><td>録画時間（秒）</td></tr>
+ <tr onClick="setFormInput('%DURATIONHMS%')"><td><span style="font-weight:bold;">%DURATIONHMS%</span></td><td>録画時間（hh:mm:ss）</td></tr>
+ <tr onClick="setFormInput('%%[YmdHisD]*%%')"><td><span style="font-weight:bold;">%%[YmdHisD]*%%</span></td><td>開始日時(date()に書式をそのまま渡す 非変換部分に'%%'がある場合は誤変換に注意・対策はしない)</td></tr>
+ <tr onClick="setFormInput('%REPLACE(,)%')"><td><span style="font-weight:bold;">%REPLACE(</span>A<span style="font-weight:bold;">,</span>B<span style="font-weight:bold;">)%</span></td><td>ファイル名全体から文字列Aを文字列Bに置換</td></tr>
+ <tr onClick="setFormInput('%CUT()%')"><td><span style="font-weight:bold;">%CUT(</span>A<span style="font-weight:bold;">)%</span></td><td>ファイル名全体から文字列Aを削除 文字列Aは、CSVフォーマットで記述(複数指定も可能)</td></tr>
+</tbody>
+</table>
+
+</body>
+</html>
